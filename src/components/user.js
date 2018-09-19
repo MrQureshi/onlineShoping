@@ -10,16 +10,31 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
+// import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems'
+// import NotificationsIcon from '@material-ui/icons/Notifications';
+// import { mainListItems, secondaryListItems } from './listItems'
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { firebaseApp } from '../firebase'
+import { firebaseApp } from '../firebase';
+import Order from './Order'
+import DashboardCom from './dashboard'
+import Customer from './Customer'
 
+//
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+// import ListSubheader from '@material-ui/core/ListSubheader';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import PeopleIcon from '@material-ui/icons/People';
+import BarChartIcon from '@material-ui/icons/BarChart';
+import LayersIcon from '@material-ui/icons/Layers';
+// import AssignmentIcon from '@material-ui/icons/Assignment';
+////
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -95,13 +110,14 @@ const styles = theme => ({
     height: 320,
   },
 });
-
 class Dashboard extends React.Component {
   state = {
     open: false,
     anchorEl: null,
+    dashboard: true,
+    Order: false,
+    customer: false
   };
-
   handletoggle = () => {
     this.setState({
       open: !this.state.open,
@@ -116,13 +132,41 @@ class Dashboard extends React.Component {
   signOut() {
     firebaseApp.auth().signOut();
   }
+  handleDashboard(){
+    this.setState(
+      {
+        dashboard: true,
+        Order: false,
+        customer: false
+      }
+    )
+  }
+  handleOrders(){
+    this.setState(
+      {
+        dashboard: false,
+        Order: true,
+        customer: false
+      }
+    )
+  }
+  handleCustomers(){
+    this.setState(
+      {
+        dashboard: false,
+        Order: false,
+        customer: true
+      }
+    )
+  }
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state
     // console.log("render", anchorEl)
     const open = Boolean(anchorEl);
-
+    
     return (
+
       <React.Fragment>
         <CssBaseline />
         <div className={classes.root}>
@@ -150,38 +194,37 @@ class Dashboard extends React.Component {
                   <NotificationsIcon />
                 </Badge>
               </IconButton> */}
-              
-                {/* <IconButton
+
+              {/* <IconButton
                 className={classes.bigAvatar} color="inherit" aria-haspopup="true" onClick={this.handleMenu} >
                 <Avatar className={classes.bigAvatar} /> */}
-                <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle
-                    className={classes.bigAvatar}
-                  />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={() => this.signOut()}>Sign out</MenuItem>
-                </Menu>
-              
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : null}
+                aria-haspopup="true"
+                onClick={this.handleMenu}
+                color="inherit"
+              >
+                <AccountCircle
+                  className={classes.bigAvatar}
+                />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                <MenuItem onClick={() => this.signOut()}>Sign out</MenuItem>
+              </Menu>
             </Toolbar>
           </AppBar>
           <Drawer
@@ -197,29 +240,69 @@ class Dashboard extends React.Component {
               </IconButton>
             </div>
             <Divider />
-            <List>{mainListItems}</List>
-            <Divider />
-            <List>{secondaryListItems}</List>
+            <List>
+              <ListItem button onClick={() => this.handleDashboard()}>
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItem>
+              <ListItem button onClick={() => this.handleOrders()}>
+                <ListItemIcon>
+                  <ShoppingCartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Orders" />
+              </ListItem>
+              <ListItem button onClick={() => this.handleCustomers()}>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Customers" />
+              </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Reports" />
+              </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <LayersIcon />
+                </ListItemIcon>
+                <ListItemText primary="Integrations" />
+              </ListItem>
+            </List>
+            {/* <Divider /> */}
+            {/* <List>{secondaryListItems}</List> */}
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <Typography variant="display1" gutterBottom>
+            {this.state.dashboard ?
+              <DashboardCom />
+              : null
+            }
+            {this.state.Order ?
+              <Order />
+              : null
+            }
+            {
+              this.state.customer ?
+              <Customer />
+              : null
+            }
+            {/* <Typography variant="display1" gutterBottom>
               Orders
-            </Typography>
-
-            <Typography variant="display1" gutterBottom>
+            </Typography> */}
+            {/* <Typography variant="display1" gutterBottom>
               Products
-            </Typography>
-
+            </Typography> */}
           </main>
         </div>
       </React.Fragment>
     );
   }
 }
-
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
 export default withStyles(styles)(Dashboard);

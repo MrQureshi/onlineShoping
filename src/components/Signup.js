@@ -1,4 +1,3 @@
-
 import React, { Component, Fragment } from 'react';
 import { Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -72,7 +71,9 @@ class Signup extends Component{
     }
     pushData() {
         // console.log("pushData")
-        const { value, userName, email, password, imageURL, error } = this.state
+        const { value, userName, email, password, imageURL, 
+            // error
+         } = this.state
 
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(authUser => {
@@ -99,7 +100,7 @@ class Signup extends Component{
         let fileName = this.state.seletctedFile.name;
         // console.log("fileName", fileName);
 
-        const storageRef = firebase.storage().ref("/imagesRes/" + fileName);
+        const storageRef = firebase.storage().ref("/profileImages/" + fileName);
         if (!this.state.imageURL) {
             this.setState({
                 success: false,
@@ -130,7 +131,7 @@ class Signup extends Component{
     }
 
     render() {
-        const { value, userName, email, password, imageURL, seletctedFile, loading, success, } = this.state
+        const { value, userName, email, password, seletctedFile, loading, } = this.state
 
         const isInvalid =
             userName === '' || email === '' ||
@@ -224,6 +225,5 @@ class Signup extends Component{
         )
     }
 }
-
 export default Signup;
 

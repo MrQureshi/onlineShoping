@@ -7,13 +7,14 @@ import history from './history'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import reducer from './reducers'
-import { firebaseApp } from './firebase'
+import { logUser } from './action'
+// import { firebaseApp } from './firebase'
 
 import App from './components/App';
 import Signin from './components/Signin';
 import Signup from './components/Signup';
 import User from './components/user';
-
+// import Order from './components/Order'
 import firebase from 'firebase';
 
 const store = createStore(reducer);
@@ -26,10 +27,12 @@ firebase.auth().onAuthStateChanged(() => {
            let key = firebase.auth().currentUser.uid
         
             let objCurrentuser = snap.val();
-            const { email, userName, } = objCurrentuser;
-            // store.dispatch(logUser(email , userName, key ))
+            // console.log("objCurrentuser", objCurrentuser)
+            const {Email , Username, userType, profilePic} = objCurrentuser;
+            store.dispatch(logUser(Email , Username, userType, profilePic, key ))
+            // console.log("email", Email)
             // store.dispatch(logUser(email));
-                if(email === "admin@gmail.com"){
+                if(Email === "admin@gmail.com"){
                     history.push('/')
                 }else{
                     history.push('/user')
@@ -40,7 +43,6 @@ firebase.auth().onAuthStateChanged(() => {
         history.push('/signin');
     }
 })
-
 ReactDOM.render(
     <Provider store={store} >
         <Router history={history}>
@@ -53,10 +55,4 @@ ReactDOM.render(
         </Router>
     </Provider>,
     document.getElementById('root')
-
 )
-
-// import registerServiceWorker from './registerServiceWorker';
-
-// ReactDOM.render(<App />, document.getElementById('root'));
-// registerServiceWorker();
