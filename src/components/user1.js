@@ -35,7 +35,7 @@ class App extends Component {
       open: !this.state.open,
     })
 
-    console.log("open", this.state.open)
+    // console.log("open", this.state.open)
   }
   render() {
 

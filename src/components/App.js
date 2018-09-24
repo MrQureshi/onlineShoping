@@ -19,9 +19,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { firebaseApp } from '../firebase';
-import Order from './Order'
+import Cart from './Cart'
 import DashboardCom from './dashboard'
-import Customer from './Customer'
+import Purchased from './Purchased'
 
 //
 import ListItem from '@material-ui/core/ListItem';
@@ -31,8 +31,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
+// import BarChartIcon from '@material-ui/icons/BarChart';
+// import LayersIcon from '@material-ui/icons/Layers';
 // import AssignmentIcon from '@material-ui/icons/Assignment';
 ////
 const drawerWidth = 240;
@@ -116,8 +116,9 @@ class Dashboard extends React.Component {
     open: false,
     anchorEl: null,
     dashboard: true,
-    Order: false,
-    customer: false
+    cart: false,
+    purchased: false,
+    numberOfItems: 0
   };
   handletoggle = () => {
     this.setState({
@@ -133,37 +134,92 @@ class Dashboard extends React.Component {
   signOut() {
     firebaseApp.auth().signOut();
   }
-  handleDashboard(){
+  handleDashboard() {
     this.setState(
       {
         dashboard: true,
-        Order: false,
-        customer: false
+        cart: false,
+        purchased: false
       }
     )
   }
-  handleOrders(){
+  handleCarts() {
     this.setState(
       {
         dashboard: false,
-        Order: true,
-        customer: false
+        cart: true,
+        purchased: false
       }
     )
   }
-  handleCustomers(){
+  handlePurchased() {
     this.setState(
       {
         dashboard: false,
-        Order: false,
-        customer: true
+        cart: false,
+        purchased: true
       }
     )
+  }
+  componentDidMount() {
+    let array = JSON.parse(localStorage.getItem('items'))
+    let original = [];
+
+    array ? array.map((list, index) => {
+
+      let tmpStr = JSON.stringify(list)
+      var newStr = tmpStr.substring(1, tmpStr.length - 1);
+
+      return (original.push(newStr))
+
+    }): null
+    var compressed = [];
+
+    var copy = original.slice(0);
+
+    for (var i = 0; i < original.length; i++) {
+      var myCount = 0;
+
+      for (var w = 0; w < copy.length; w++) {
+        if (original[i] === copy[w]) {
+          // increase amount of times duplicate is found
+          myCount++;
+          // sets item to undefined
+          delete copy[w];
+        }
+      }
+      if (myCount > 0) {
+        var a = {}
+
+        var b = {};
+
+        b.obj = original[i];
+        let inString = b
+        let getObj
+
+        for (let key in inString) {
+          // console.log("for", b[key])
+          let mystring = inString[key]
+          mystring = ('{' + mystring + '}')
+          // console.log("mysttt", mystring)
+          let prs = JSON.parse(mystring);
+          // console.log("perse", prs)
+
+          getObj = prs
+        }
+        a.value = getObj;
+        a.count = myCount;
+        compressed.push(a);
+      }
+    }
+    this.setState({
+      numberOfItems: compressed.length
+    })
   }
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state
-    // console.log("render", anchorEl)
+    // console.log("render mnmn", numberOfItems)
     const open = Boolean(anchorEl);
     return (
       <React.Fragment>
@@ -196,17 +252,17 @@ class Dashboard extends React.Component {
                 />
               </IconButton>
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
-               Admin
+                Admin
               </Typography>
-              <IconButton color="inherit">
-                <Badge badgeContent={JSON.parse(localStorage.getItem('items'))?JSON.parse(localStorage.getItem('items')).length: 0} color="secondary">
+              <IconButton onClick={() => this.handleCarts()} color="inherit">
+                <Badge badgeContent={this.state.numberOfItems ? this.state.numberOfItems : 0} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
               {/* <IconButton
                 className={classes.bigAvatar} color="inherit" aria-haspopup="true" onClick={this.handleMenu} >
                 <Avatar className={classes.bigAvatar} /> */}
-              
+
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
@@ -246,19 +302,19 @@ class Dashboard extends React.Component {
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItem>
-              <ListItem button onClick={() => this.handleOrders()}>
+              <ListItem button onClick={() => this.handleCarts()}>
                 <ListItemIcon>
                   <ShoppingCartIcon />
                 </ListItemIcon>
-                <ListItemText primary="Orders" />
+                <ListItemText primary="Carts" />
               </ListItem>
-              <ListItem button onClick={() => this.handleCustomers()}>
+              <ListItem button onClick={() => this.handlePurchased()}>
                 <ListItemIcon>
                   <PeopleIcon />
                 </ListItemIcon>
-                <ListItemText primary="Customers" />
+                <ListItemText primary="Purchased" />
               </ListItem>
-              <ListItem button>
+              {/* <ListItem button>
                 <ListItemIcon>
                   <BarChartIcon />
                 </ListItemIcon>
@@ -268,8 +324,8 @@ class Dashboard extends React.Component {
                 <ListItemIcon>
                   <LayersIcon />
                 </ListItemIcon>
-                <ListItemText primary="Integrations" />
-              </ListItem>
+                <ListItemText primary="Integrations" /> */}
+              {/* </ListIte m> */}
             </List>
             {/* <Divider /> */}
             {/* <List>{secondaryListItems}</List> */}
@@ -280,16 +336,18 @@ class Dashboard extends React.Component {
               <DashboardCom />
               : null
             }
-            {this.state.Order ?
-              <Order />
+            {this.state.cart ?
+              <Cart
+              // getstate={this.state}
+              />
               : null
             }
-            {this.state.customer ?
-              <Customer />
+            {this.state.purchased ?
+              <Purchased />
               : null
             }
             {/* <Typography variant="display1" gutterBottom>
-              Orders
+              Carts
             </Typography> */}
             {/* <Typography variant="display1" gutterBottom>
               Products

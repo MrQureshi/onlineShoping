@@ -25,7 +25,7 @@ class Addcategory extends Component {
         super(props);
         this.state = {
             open: false,
-            error: '',
+            // error: '',
             productName: '',
             productPrice: '',
             productDescription: '',
@@ -34,9 +34,9 @@ class Addcategory extends Component {
             loading: false,
             success: false,
             imageURL: null,
-            // error: {
-            //     message: ''
-            // }
+            error: {
+                message: ''
+            }
         }
     }
 
@@ -184,7 +184,9 @@ class Addcategory extends Component {
                                     value={this.state.productDescription}
                                 /><br />
                                 <Typography align="center" component="p" variant="subheading" color="error">
-                                    {this.state.error}
+                                    {
+                                        this.state.error.message
+                                    }
                                 </Typography>
                                 <br />
                                 <Button

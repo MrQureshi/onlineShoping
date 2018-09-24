@@ -117,7 +117,7 @@ class SignIn extends Component {
         // console.log("this.state.seletctedFile", this.state.seletctedFile.name);
 
         let fileName = this.state.seletctedFile.name;
-        console.log("fileName", fileName)
+        // console.log("fileName", fileName)
         const storageRef = firebase.storage().ref("/imagesRes/" + fileName);
         if (!this.state.imageURL) {
             this.setState({
@@ -130,10 +130,10 @@ class SignIn extends Component {
                         .then((snapshot) => {
 
                             let download = storageRef.getDownloadURL()
-                            console.log("snaps", download)
+                            // console.log("snaps", download)
 
                             setTimeout(() => {
-                                console.log("stim", download.i)
+                                // console.log("stim", download.i)
                                 this.setState({
                                     imageURL: download.i,
                                     loading: false,
@@ -167,7 +167,7 @@ class SignIn extends Component {
     render() {
         const { classes } = this.props
         const { value, userName, email, password, imageURL, seletctedFile, loading, success } = this.state
-        console.log("render imageURL", imageURL)
+        // console.log("render imageURL", imageURL)
 
         const isInvalid =
             userName === '' ||

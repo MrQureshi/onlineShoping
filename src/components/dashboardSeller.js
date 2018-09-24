@@ -16,19 +16,20 @@ import * as firebase from 'firebase';
 // import { Link } from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import Addcategory from './Addcategory'
+// import Addcategory from './Addcategory'
 import { fnCategory } from '../action'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 // import CardContent from '@material-ui/core/CardContent';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
+// import DeleteIcon from '@material-ui/icons/Delete';
+// import IconButton from '@material-ui/core/IconButton';
 // import ViewIcon from '@material-ui/icons/Visibility';
-import Showproduct from './Showproducts'
+import Showproduct from './ShowproductsSeller'
+
 
 import Divider from '@material-ui/core/Divider';
-// import Addproduct from './Addproduct'
+import Addproduct from './Addproduct'
 
 const theme = createMuiTheme({
     palette: {
@@ -105,10 +106,10 @@ class Dashboard extends Component {
                                 </Typography>
 
                             </Grid>
-                            <Grid style={styles.flex} item xs={2}>
+                            {/* <Grid style={styles.flex} item xs={2}> */}
                                 {/* <Button  variant="outlined">add category</Button> */}
-                                <Addcategory />
-                            </Grid>
+                                {/* <Addcategory /> */}
+                            {/* </Grid> */}
                         </Grid>
                     </Paper>
                     {
@@ -138,13 +139,13 @@ class Dashboard extends Component {
                                                 <ViewIcon variant="fab" />
                                             </IconButton> */}
                                             <Showproduct showProductProps={catList}/>
-                                            {/* <Addproduct addProductProps={catList} /> */}
+                                            <Addproduct addProductProps={catList} />
                                             {/* <IconButton aria-label="Delete" style={{ float: "Right" }}>
                                                 <AddIcon />
                                             </IconButton> */}
-                                            <IconButton aria-label="Delete" style={{ float: "Right" }}>
+                                            {/* <IconButton aria-label="Delete" style={{ float: "Right" }}>
                                                 <DeleteIcon variant="fab" />
-                                            </IconButton>
+                                            </IconButton> */}
                                             {/* <Button variant='fab' color="primary" size="small">
                                                 <AddIcon />
                                             </Button>

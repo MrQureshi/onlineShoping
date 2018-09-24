@@ -86,7 +86,7 @@ class Signup extends Component{
                     profilePic: imageURL,
                     userType: value
                 }).then(
-                    console.log("then")
+                    // console.log("then")
                 )
                     .catch(error => {
                         this.setState({ error })
@@ -110,10 +110,10 @@ class Signup extends Component{
                     storageRef.put(this.state.seletctedFile)
                         .then((snapshot) => {
                             let download = storageRef.getDownloadURL()
-                            console.log("snaps", download)
+                            // console.log("snaps", download)
 
                             setTimeout(() => {
-                                console.log("setTimeOut", download.i)
+                                // console.log("setTimeOut", download.i)
                                 this.setState({
                                     imageURL: download.i,
                                     loading: false,

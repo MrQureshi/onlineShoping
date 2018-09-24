@@ -30,7 +30,7 @@ import CardActions from '@material-ui/core/CardActions';
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 // import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Divider } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+// import AddIcon from '@material-ui/icons/Add';
 // import { get } from 'http';
 // const styles = {
 
@@ -88,7 +88,7 @@ class showProduct extends React.Component {
         open: false,
         productList: [],
         expanded: false,
-        storageData:""
+        storageData: ""
     };
     handleExpandClick = () => {
         this.setState(state => ({ expanded: !state.expanded }));
@@ -104,18 +104,40 @@ class showProduct extends React.Component {
         let catKey = selectedCategory.key;
 
         // console.log("catKey", catKey)
-        firebase.database().ref('Product/' + catKey).on('value', snap => {
-            let objProduct = snap.val();
-            // console.log("obj", objProduct)
-            let productList = [];
-            for (let key in objProduct) {
-                productList.push({ ...objProduct[key], key });
-            }
-            // console.log("productList", productList)
+        firebase.auth().onAuthStateChanged((user) => {
+            // console.log("currentUser.uid", user.email, user.uid)
 
-            this.setState({
-                productList
-            })
+
+            if (user) {
+                firebase.database().ref('Product/' + catKey).on('value', snap => {
+                    let objProduct = snap.val();
+                    // console.log("obj", objProduct)
+
+                    let productList = [];
+                    for (let key in objProduct) {
+                        
+                        if (user.uid === objProduct[key].userKey) {
+                               
+                                productList.push({ ...objProduct[key], key });
+                        }
+                        
+                        // for (let key in getData) {
+                            // console.log("??", getData[key].userKey)
+                            
+                        // }
+
+
+
+                        // productList.push({ ...objProduct[key], key });
+                    }
+
+                    // console.log("productList", productList)
+
+                    this.setState({
+                        productList
+                    })
+                })
+            }
         })
     };
     handleClose(e) {
@@ -126,7 +148,7 @@ class showProduct extends React.Component {
     handleAddItem(item) {
         // console.log("itemmm", item)
         // let getData = JSON.parse(localStorage.getItem("addtocart"));
-        let itemsArray =JSON.parse(localStorage.getItem('items', JSON.stringify([item]))) ? JSON.parse(localStorage.getItem('items')) : [];
+        let itemsArray = JSON.parse(localStorage.getItem('items', JSON.stringify([item]))) ? JSON.parse(localStorage.getItem('items')) : [];
 
         itemsArray.push(item);
         localStorage.setItem('items', JSON.stringify(itemsArray));
@@ -167,10 +189,8 @@ class showProduct extends React.Component {
                         flexDirection: "row", display: "flex",
                         //  flexWrap:"wrep",
                     }}>
-
                         {
                             this.state.productList.length ?
-                            
                             this.state.productList.map((proList, index) => {
                                 return (
                                     <Fragment key={index}>
@@ -211,9 +231,9 @@ class showProduct extends React.Component {
                                                 <ShareIcon />
                                             </IconButton> */}
 
-                                                <IconButton className={classes.showLeft} onClick={() => this.handleAddItem(proList)} aria-label="Add to cart">
+                                                {/* <IconButton className={classes.showLeft} onClick={() => this.handleAddItem(proList)} aria-label="Add to cart">
                                                     <AddIcon />
-                                                </IconButton>
+                                                </IconButton> */}
                                                 {/* <IconButton
                                                 className={classnames(classes.expand, {
                                                     [classes.expandOpen]: this.state.expanded,
@@ -259,9 +279,9 @@ class showProduct extends React.Component {
 
                                     </Fragment>
                                 )
-                            }):
+                            }) :
                             <Typography style={{paddingLeft :"40%", paddingTop: 10 }} align='center' variant="subheading">
-                                Sorry! No product have been added this cetagory
+                                Sorry! You have no product in this cetagory
                             </Typography>
                         }
 

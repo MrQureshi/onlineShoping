@@ -19,9 +19,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { firebaseApp } from '../firebase';
-import Cart from './Cart'
-import DashboardCom from './dashboardUser'
-import Purchased from './Purchased'
+
+import DashboardCom from './dashboard'
+import Purchased from './purchasedAdmin'
 
 //
 import ListItem from '@material-ui/core/ListItem';
@@ -29,7 +29,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 // import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PeopleIcon from '@material-ui/icons/People';
 // import BarChartIcon from '@material-ui/icons/BarChart';
 // import LayersIcon from '@material-ui/icons/Layers';
@@ -118,7 +117,7 @@ class Dashboard extends React.Component {
         open: false,
         anchorEl: null,
         dashboard: true,
-        cart: false,
+    
         purchased: false,
         // numberOfItems: 0
     };
@@ -141,25 +140,17 @@ class Dashboard extends React.Component {
         this.setState(
             {
                 dashboard: true,
-                cart: false,
+                
                 purchased: false
             }
         )
     }
-    handleCarts() {
-        this.setState(
-            {
-                dashboard: false,
-                cart: true,
-                purchased: false
-            }
-        )
-    }
+    
     handlePurchased() {
         this.setState(
             {
                 dashboard: false,
-                cart: false,
+               
                 purchased: true
             }
         )
@@ -246,8 +237,8 @@ class Dashboard extends React.Component {
                             </IconButton>
 
                             <Typography variant="title" color="inherit" noWrap className={classes.title}>
-                                User
-                            </Typography>
+                                Admin
+              </Typography>
                             {/* <IconButton onClick={() => this.handleCarts()} color="inherit">
                                 <Badge badgeContent={this.state.numberOfItems ? this.state.numberOfItems : 0} color="secondary">
                                     <NotificationsIcon /> */}
@@ -309,12 +300,7 @@ class Dashboard extends React.Component {
                            
                            
 
-                                <ListItem button onClick={() => this.handleCarts()}>
-                                    <ListItemIcon>
-                                        <ShoppingCartIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Carts" />
-                                </ListItem>
+                                
 
                            
                             <ListItem button onClick={() => this.handlePurchased()}>
@@ -340,25 +326,18 @@ class Dashboard extends React.Component {
                         {/* <List>{secondaryListItems}</List> */}
                     </Drawer>
                     <main className={classes.content}>
-                        {/* <Cart /> */}
+                    
                         <div className={classes.appBarSpacer} />
-                        {/* <DashboardCom/>
-                        <Cart/> */}
+                        
                         {this.state.dashboard ?
                             <DashboardCom />
                             : null
                         }
-                        {this.state.cart ?
-                            <Cart
-                            // getstate={this.state}
-                            />
-                            : null
-                        }
+                        
                         {this.state.purchased ?
                             <Purchased />
                             : null
                         }
-                        {/* <Cart /> */}
                     </main>
                 </div>
             </React.Fragment>
