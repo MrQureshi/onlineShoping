@@ -20,6 +20,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
 // import IconButton from '@material-ui/core/IconButton';
 // import CloseIcon from '@material-ui/icons/Close';
 
@@ -69,21 +70,28 @@ class Purchased extends Component {
     constructor() {
         super();
         this.state = {
-            PurchaseList: []
+            PurchaseList: [],
+            page: 0,
+            rowsPerPage: 5,
         }
     }
-
+    handleChangePage = (event, page) => {
+        this.setState({ page });
+    };
+    handleChangeRowsPerPage = event => {
+        this.setState({ rowsPerPage: event.target.value });
+    };
     componentWillMount() {
         // const {  key } = this.props.user;
         // console.log("wiill", Email, key)
         firebase.auth().onAuthStateChanged((user) => {
 
-            firebase.database().ref('Cart/' +  user.uid).on('value', snap => {
+            firebase.database().ref('Cart/' + user.uid).on('value', snap => {
                 let objPurchase = snap.val();
                 // console.log("obj", objPurchase)
                 let PurchaseList = [];
                 for (let key in objPurchase) {
-                    PurchaseList.push({ ...objPurchase[key], key});
+                    PurchaseList.push({ ...objPurchase[key], key });
                 }
                 // console.log("PurchaseList", PurchaseList)
                 this.setState({
@@ -93,6 +101,8 @@ class Purchased extends Component {
         })
     }
     render() {
+     
+        const{page, rowsPerPage} = this.state
         return (
             // <div><h1>This is order page</h1>
             // <h1>This is order page</h1>
@@ -125,7 +135,7 @@ class Purchased extends Component {
                             </TableHead>
                             <TableBody>
                                 {
-                                    this.state.PurchaseList.map((purList, index) => {
+                                    this.state.PurchaseList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((purList, index) => {
                                         let date = new Date(purList.date)
                                         // console.log("date", date.toLocaleDateString())
                                         let dt = date.toLocaleDateString()
@@ -191,7 +201,20 @@ class Purchased extends Component {
                                         </TableRow>
                                 </TableFooter> */}
                         </Table>
-
+                        <TablePagination
+                            component="div"
+                            count={this.state.PurchaseList.length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            backIconButtonProps={{
+                                'aria-label': 'Previous Page',
+                            }}
+                            nextIconButtonProps={{
+                                'aria-label': 'Next Page',
+                            }}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
 
                         {/* {
                             // Email: "admin@gmail.com"

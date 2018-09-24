@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import TableFooter from '@material-ui/core/TableFooter';
 import firebase from 'firebase';
+import { connect } from 'react-redux'
 
 // import { TextField, Button } from '@material-ui/core';
 // import RadioGroup from '@material-ui/core/RadioGroup';
@@ -150,7 +151,7 @@ class Cart extends Component {
             // let tot = this.state.cartItem[i].value.productPrice * this.state.cartItem[i].count
             // console.log("", tot)
             // atot.push(tot)
-            // let userkey = cartItem[i].value.userKey
+            let userkey = cartItem[i].value.userKey
             
             let item = cartItem[i].value
             item.qty = cartItem[i].count
@@ -185,12 +186,12 @@ class Cart extends Component {
             let Total = item.Total
             let categoryName = item.categoryName
 
-            // let  dateMSs = {productKey,Email ,productName, productPrice, Quantity, Total}
-            firebase.auth().onAuthStateChanged((user) => {
-                // console.log("currentUser.uid", user.email, user.uid)
-                let buyerEmail = user.email
-                
-                    firebase.database().ref('Cart/' + user.uid).push({
+            // let user = this.props.user
+            const { Email, key } = this.props.user;
+            console.log("user", Email, key)
+            let buyerEmail = Email
+            
+                    firebase.database().ref('Cart/'+key).push({
                         productKey,
                         date,
                         sellerEmail,
@@ -203,7 +204,6 @@ class Cart extends Component {
                         shippngDetail,
                     })
                
-            })
         }
         this.setState({
             cartItem: [],
@@ -314,8 +314,10 @@ class Cart extends Component {
         })
     }
     render() {
+console.log(this.state, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+
         const { address, mobileNum, cartItem } = this.state
-        console.log('Render', cartItem)
+        // console.log('Render', cartItem)
         const isInvalid =
             address === '' ||
             mobileNum === null;
@@ -488,6 +490,13 @@ class Cart extends Component {
         )
     }
 }
+function mapStateToProps(state) {
+    const { user, } = state;
+    // console.log("state in addCategory", state)
+    return {
+        user,
+    };
+}
 
-export default Cart;
+export default connect(mapStateToProps,null) (Cart);
 

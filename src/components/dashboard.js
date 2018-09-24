@@ -76,6 +76,14 @@ const styles = {
     // }
 };
 class Dashboard extends Component {
+
+    handleDelete(e, key){
+        e.preventDefault()
+
+        console.log("key", key)
+        // firebase.database().ref('Category'+ key).remove();
+
+    }
     componentDidMount() {
         firebase.database().ref('Category').on('value', snap => {
             // console.log("hghhgv")
@@ -90,11 +98,6 @@ class Dashboard extends Component {
     }
     render() {
         return (
-            // <div><h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1></div>
             <Fragment>
                 <MuiThemeProvider theme={theme}>
                     <Paper style={styles.paper} >
@@ -103,7 +106,6 @@ class Dashboard extends Component {
                                 <Typography variant="display1">
                                     Category
                                 </Typography>
-
                             </Grid>
                             <Grid style={styles.flex} item xs={2}>
                                 {/* <Button  variant="outlined">add category</Button> */}
@@ -142,7 +144,7 @@ class Dashboard extends Component {
                                             {/* <IconButton aria-label="Delete" style={{ float: "Right" }}>
                                                 <AddIcon />
                                             </IconButton> */}
-                                            <IconButton aria-label="Delete" style={{ float: "Right" }}>
+                                            <IconButton onClick={(e) =>this.handleDelete(e, catList.key ) } aria-label="Delete" style={{ float: "Right" }}>
                                                 <DeleteIcon variant="fab" />
                                             </IconButton>
                                             {/* <Button variant='fab' color="primary" size="small">
@@ -163,9 +165,10 @@ class Dashboard extends Component {
     }
 }
 function mapStateToProps(state) {
-    const { categoryList } = state;
+    const {  categoryList } = state;
     console.log("state in Dashboard", state)
     return {
+    
         categoryList
     };
 }

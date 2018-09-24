@@ -19,6 +19,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { firebaseApp } from '../firebase';
+import { connect } from 'react-redux'
 
 import DashboardCom from './dashboardSeller'
 import Purchased from './PurchasedSeller'
@@ -140,17 +141,17 @@ class Dashboard extends React.Component {
         this.setState(
             {
                 dashboard: true,
-             
+
                 purchased: false
             }
         )
     }
-   
+
     handlePurchased() {
         this.setState(
             {
                 dashboard: false,
-                
+
                 purchased: true
             }
         )
@@ -213,6 +214,8 @@ class Dashboard extends React.Component {
     render() {
         const { classes } = this.props;
         const { anchorEl } = this.state
+        const { Email, Username, profilePic, key } = this.props.user
+        // console.log("rander", key)
         // console.log("render mnmn", numberOfItems)
         const open = Boolean(anchorEl);
         return (
@@ -237,7 +240,7 @@ class Dashboard extends React.Component {
                             </IconButton>
 
                             <Typography variant="title" color="inherit" noWrap className={classes.title}>
-                                Seller
+                                {Username}
                             </Typography>
                             {/* <IconButton onClick={() => this.handleCarts()} color="inherit">
                                 <Badge badgeContent={this.state.numberOfItems ? this.state.numberOfItems : 0} color="secondary">
@@ -290,14 +293,14 @@ class Dashboard extends React.Component {
                         </div>
                         <Divider />
                         <List>
-                            
-                                <ListItem button onClick={() => this.handleDashboard()}>
-                                    <ListItemIcon>
-                                        <DashboardIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Dashboard" />
-                                </ListItem>
-                          
+
+                            <ListItem button onClick={() => this.handleDashboard()}>
+                                <ListItemIcon>
+                                    <DashboardIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Dashboard" />
+                            </ListItem>
+
                             <ListItem button onClick={() => this.handlePurchased()}>
                                 <ListItemIcon>
                                     <PeopleIcon />
@@ -321,20 +324,20 @@ class Dashboard extends React.Component {
                         {/* <List>{secondaryListItems}</List> */}
                     </Drawer>
                     <main className={classes.content}>
-                        
+
                         <div className={classes.appBarSpacer} />
-                     
-               
+
+
                         {this.state.dashboard ?
                             <DashboardCom />
                             : null
                         }
-                       
+
                         {this.state.purchased ?
                             <Purchased />
                             : null
                         }
-                      
+
                     </main>
                 </div>
             </React.Fragment>
@@ -345,5 +348,13 @@ class Dashboard extends React.Component {
 Dashboard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
+function mapStateToProps(state) {
+    const { user } = state;
+    // console.log("state in seller", state)
+    return {
+        user
+    };
+}
 
-export default withStyles(styles)(Dashboard);
+
+export default connect(mapStateToProps, null)(withStyles(styles)(Dashboard));

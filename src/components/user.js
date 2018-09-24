@@ -22,7 +22,7 @@ import { firebaseApp } from '../firebase';
 import Cart from './Cart'
 import DashboardCom from './dashboardUser'
 import Purchased from './Purchased'
-
+import { connect } from 'react-redux'
 //
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -221,7 +221,9 @@ class Dashboard extends React.Component {
     // }
     render() {
         const { classes } = this.props;
-        const { anchorEl } = this.state
+        const { anchorEl } = this.state;
+        const { Email, Username, profilePic, key } = this.props.user
+        
         // console.log("render mnmn", numberOfItems)
         const open = Boolean(anchorEl);
         return (
@@ -246,7 +248,7 @@ class Dashboard extends React.Component {
                             </IconButton>
 
                             <Typography variant="title" color="inherit" noWrap className={classes.title}>
-                                User
+                                {Username  }
                             </Typography>
                             {/* <IconButton onClick={() => this.handleCarts()} color="inherit">
                                 <Badge badgeContent={this.state.numberOfItems ? this.state.numberOfItems : 0} color="secondary">
@@ -369,5 +371,11 @@ class Dashboard extends React.Component {
 Dashboard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-
-export default withStyles(styles)(Dashboard);
+function mapStateToProps(state) {
+    const { user } = state;
+    // console.log("state in seller", state)
+    return {
+        user
+    };
+}
+export default connect(mapStateToProps, null) (withStyles(styles)(Dashboard));
