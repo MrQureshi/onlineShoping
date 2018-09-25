@@ -86,7 +86,14 @@ class Signup extends Component{
                     profilePic: imageURL,
                     userType: value
                 }).then(
-                    // console.log("then")
+                    this.setState({
+                        userName: '',
+                        email: '',
+                        password: '',
+                        value: '',
+                        // imageURL: null,
+                        seletctedFile: null,
+                    })
                 )
                     .catch(error => {
                         this.setState({ error })
