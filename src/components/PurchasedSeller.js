@@ -218,7 +218,7 @@ class Purchased extends Component {
                             }}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        />S
+                        />
 
                         {/* {
                             // Email: "admin@gmail.com"
@@ -250,9 +250,6 @@ class Purchased extends Component {
                                 <Typography variant="headline" align="center">
                                     Empty
                                 </Typography>
-
-
-
                         } */}
                     </Fragment>
                 </MuiThemeProvider>

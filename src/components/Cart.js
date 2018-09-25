@@ -14,6 +14,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import TableFooter from '@material-ui/core/TableFooter';
 import firebase from 'firebase';
 import { connect } from 'react-redux'
+import { fnUpdate } from "../action/index";
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 // import { TextField, Button } from '@material-ui/core';
 // import RadioGroup from '@material-ui/core/RadioGroup';
@@ -26,6 +30,8 @@ import { connect } from 'react-redux'
 // import { Link } from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 // import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 const theme = createMuiTheme({
     palette: {
@@ -36,6 +42,9 @@ const theme = createMuiTheme({
 const styles = {
     flex: {
         flex: 1,
+    },
+    dialogWidth: {
+        width: 400
     },
     paper: {
         flex: 1,
@@ -91,16 +100,23 @@ class Cart extends Component {
             shippngCom: false,
             address: '',
             mobileNum: null,
+            open: false,
+            vertical: 'bottom',
+            horizontal: 'center',
+            snackopen: false,
+            msg: ""
         }
     }
 
     handleDelete(e, index) {
         e.preventDefault()
-        let array = [...this.state.cartItem]
+        let array = [...this.props.cartItem]
 
         // console.log(key)
         array.splice(index, 1);
-        this.setState({ cartItem: array });
+        console.log("thisDele", this.props.cartItem)
+        this.props.fnUpdate(array)
+        // this.setState({ cartItem: array });
 
         ///////////////done/////////
         // console.log("without parse", localStorage.getItem("items"))
@@ -134,25 +150,25 @@ class Cart extends Component {
         this.setState({
             shippngCom: true
         })
+
     }
+    handleClose = () => {
+        this.setState({ snackopen: false });
+    };
     handlsubmit(e) {
         e.preventDefault();
 
-        const { cartItem, address, mobileNum } = this.state
 
-        // console.log(address, mobileNum)
-        // console.log("Done", cartItem, Total)
+        const { address, mobileNum } = this.state
 
-       
+        console.log("click", this.props.cartItem)
+        let cartItem = this.props.cartItem
 
-        // let ref = firebase.database().ref('Cart/' + userkey);
+
         for (let i = 0; i < cartItem.length; i++) {
-            // console.log("for", i)
-            // let tot = this.state.cartItem[i].value.productPrice * this.state.cartItem[i].count
-            // console.log("", tot)
-            // atot.push(tot)
-            let userkey = cartItem[i].value.userKey
-            
+
+            // let userkey = cartItem[i].value.userKey
+
             let item = cartItem[i].value
             item.qty = cartItem[i].count
             item.Total = cartItem[i].value.productPrice * cartItem[i].count
@@ -163,20 +179,7 @@ class Cart extends Component {
             let date = new Date();
             console.log(date.getTime())
             date = date.getTime()
-            // console.log("item", item)
 
-            // Email: "admin@gmail.com"
-            // Total: 7014
-            // catKey: "-LMgp1VuNW5XnIUdSmV0"
-            // categoryName: "Mobiles"
-            // imageURL: "https://firebasestorage.googleapis.com/v0/b/onlineshoping-0.appspot.com/o/productImages%2Fkisspng-crystal-mountain-water-cooler-bottled-water-blue-bucket-5a7e5bc5bd7552.2645095515182304697761.jpg?alt=media&token=9a6c6852-c549-44ae-a3b5-96c860d79e88"
-            // key: "-LMkhCe0EvDknCCDEPXB"
-            // productDescription: "qwqwewqe"
-            // productName: "aqwq"
-            // productPrice: "1002"
-            // qty: 7
-            // userKey: "lzymc40quWXW5aVNlkNQcQ61Brx1"
-            // __proto__: Object
 
             let productKey = item.key
             let sellerEmail = item.Email
@@ -190,112 +193,102 @@ class Cart extends Component {
             const { Email, key } = this.props.user;
             console.log("user", Email, key)
             let buyerEmail = Email
-            
-                    firebase.database().ref('Cart/'+key).push({
-                        productKey,
-                        date,
-                        sellerEmail,
-                        buyerEmail,
-                        productName,
-                        productPrice,
-                        Quantity,
-                        Total,
-                        categoryName,
-                        shippngDetail,
-                    })
-               
+
+            firebase.database().ref('Cart/' + key).push({
+                productKey,
+                date,
+                sellerEmail,
+                buyerEmail,
+                productName,
+                productPrice,
+                Quantity,
+                Total,
+                categoryName,
+                shippngDetail,
+            })
         }
         this.setState({
             cartItem: [],
             shippngCom: false,
             address: '',
-            mobileNum: null
+            mobileNum: null,
+            snackopen: true,
+            open: false,
+            msg: "your cart has been submitted"
         })
+        // this.props.cartItem=null
+        // this.handletoggle(e)
         localStorage.clear("items")
         // window.location.reload()
     }
-    componentWillMount() {
-        // let getstate = this.props.getstate
-
-        // this.setState({
-        //     setAsState: getstate
-        // })
-
-        // console.log("ohohh", getState)
-
-        let array = JSON.parse(localStorage.getItem('items'))
-
-
-        // console.log("array", array)
-        let original = [];
-
-        array ? 
-        array.map((list, index) => {
-            // console.log(list)
-            let tmpStr = JSON.stringify(list)
-            var newStr = tmpStr.substring(1, tmpStr.length - 1);
-
-            // console.log("new", newStr)
-            return (original.push(newStr))
-
-        })
-         : null
-        //   console.log("org", original)
-
-        var compressed = [];
-        // make a copy of the input array
-        var copy = original.slice(0);
-
-        // first loop goes over every element
-        for (var i = 0; i < original.length; i++) {
-
-            var myCount = 0;
-            // loop over every element in the copy and see if it's the same
-            for (var w = 0; w < copy.length; w++) {
-                if (original[i] === copy[w]) {
-                    // increase amount of times duplicate is found
-                    myCount++;
-                    // sets item to undefined
-                    delete copy[w];
-                }
-            }
-            if (myCount > 0) {
-                var a = {}
-
-                var b = {};
-
-                b.obj = original[i];
-                let inString = b
-                let getObj
-
-                for (let key in inString) {
-                    // console.log("for", b[key])
-                    let mystring = inString[key]
-                    mystring = ('{' + mystring + '}')
-                    // console.log("mysttt", mystring)
-                    let prs = JSON.parse(mystring);
-                    // console.log("perse", prs)
-
-                    getObj = prs
-                }
-                a.value = getObj;
-                a.count = myCount;
-                compressed.push(a);
-            }
-            // if (myCount > 0) {
-            //     var a = new Object();
-            //     a.value = original[i];
-            //     a.count = myCount;
-            //     compressed.push(a);
-            // }
-        }
-        this.setState({
-            cartItem: compressed
-        })
-        // console.log(compressed)
-    }
+    // componentWillMount() {
+    // console.log("comWILL", this.props.cartItem)
+    // // let getstate = this.props.getstate
+    // // this.setState({
+    // //     setAsState: getstate
+    // // })
+    // // console.log("ohohh", getState)
+    // let array = JSON.parse(localStorage.getItem('items'))
+    // // console.log("array", array)
+    // let original = [];
+    // array ? 
+    // array.map((list, index) => {
+    //     // console.log(list)
+    //     let tmpStr = JSON.stringify(list)
+    //     var newStr = tmpStr.substring(1, tmpStr.length - 1);
+    //     // console.log("new", newStr)
+    //     return (original.push(newStr))
+    // })
+    //  : null
+    // //   console.log("org", original)
+    // var compressed = [];
+    // // make a copy of the input array
+    // var copy = original.slice(0);
+    // // first loop goes over every element
+    // for (var i = 0; i < original.length; i++) {
+    //     var myCount = 0;
+    //     // loop over every element in the copy and see if it's the same
+    //     for (var w = 0; w < copy.length; w++) {
+    //         if (original[i] === copy[w]) {
+    //             // increase amount of times duplicate is found
+    //             myCount++;
+    //             // sets item to undefined
+    //             delete copy[w];
+    //         }
+    //     }
+    //     if (myCount > 0) {
+    //         var a = {}
+    //         var b = {};
+    //         b.obj = original[i];
+    //         let inString = b
+    //         let getObj
+    //         for (let key in inString) {
+    //             // console.log("for", b[key])
+    //             let mystring = inString[key]
+    //             mystring = ('{' + mystring + '}')
+    //             // console.log("mysttt", mystring)
+    //             let prs = JSON.parse(mystring);
+    //             // console.log("perse", prs)
+    //             getObj = prs
+    //         }
+    //         a.value = getObj;
+    //         a.count = myCount;
+    //         compressed.push(a);
+    //     }
+    //     // if (myCount > 0) {
+    //     //     var a = new Object();
+    //     //     a.value = original[i];
+    //     //     a.count = myCount;
+    //     //     compressed.push(a);
+    //     // }
+    // }
+    // this.setState({
+    //     cartItem: compressed
+    // })
+    // console.log(compressed)
+    // }
     componentDidMount() {
-        console.log("componentdidMount", this.state.cartItem)
+        console.log("componentdidMount PROPS", this.props.cartItem)
         let atot = []
         for (let i = 0; i < this.state.cartItem.length; i++) {
             // console.log("for", i)
@@ -313,21 +306,24 @@ class Cart extends Component {
             Total: sum
         })
     }
+    handletoggle = (e) => {
+        // console.log("sj", !this.state.open)
+        e.preventDefault()
+        this.setState({
+            open: !this.state.open,
+        })
+    }
     render() {
-console.log(this.state, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
-        const { address, mobileNum, cartItem } = this.state
-        // console.log('Render', cartItem)
+        const { snackopen, open, address, mobileNum, vertical, horizontal, } = this.state
+
+        console.log("render snack", snackopen)
+
         const isInvalid =
             address === '' ||
             mobileNum === null;
 
         return (
-            // <div><h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1>
-            // <h1>This is order page</h1></div>
             <Fragment>
                 <MuiThemeProvider theme={theme}>
                     <Paper style={styles.paper} >
@@ -342,102 +338,80 @@ console.log(this.state, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
                     <Grid container>
                         <Grid style={styles.flex} item xs={1}></Grid>
                         <Grid style={styles.flex} item xs={10}>
-                            {/* Email: "admin@gmail.com"
-                            catKey: "-LMgp1VuNW5XnIUdSmV0"
-                            categoryName: "Mobiles"
-                            imageURL: "https://firebasestorage.googleapis.com/v0/b/onlineshoping-0.appspot.com/o/productImages%2Fkisspng-crystal-mountain-water-cooler-bottled-water-blue-bucket-5a7e5bc5bd7552.2645095515182304697761.jpg?alt=media&token=9a6c6852-c549-44ae-a3b5-96c860d79e88"
-                            key: "-LMkhCe0EvDknCCDEPXB"
-                            productDescription: "qwqwewqe"
-                            productName: "aqwq"
-                            productPrice: "1002"
-                            userKey: "lzymc40quWXW5aVNlkNQcQ61Brx1" */}
 
                             <Fragment>
                                 {
-
-                                    console.log(this.state.cartItem)
-                                }
-                                {
-                                    this.state.cartItem && this.state.cartItem.length
+                                    this.props.cartItem && this.props.cartItem.length
                                         ?
-                                        <Table style={styles.table}>
-                                            <TableHead >
-                                                <TableRow>
-                                                    <TableCell>Name</TableCell>
-                                                    <TableCell>Price</TableCell>
-                                                    <TableCell>Image</TableCell>
-                                                    <TableCell>Quantity</TableCell>
-                                                    <TableCell>TotalPrice</TableCell>
+                                        <Fragment>
+                                            <Table style={styles.table}>
+                                                <TableHead >
+                                                    <TableRow>
+                                                        <TableCell>Name</TableCell>
+                                                        <TableCell>Price</TableCell>
+                                                        <TableCell>Image</TableCell>
+                                                        <TableCell>Quantity</TableCell>
+                                                        <TableCell>TotalPrice</TableCell>
 
-                                                    <TableCell></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {
-                                                    this.state.cartItem.map((item, index) => {
-                                                        let Total = Number(item.value.productPrice) * Number(item.count)
+                                                        <TableCell></TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {
+                                                        this.props.cartItem.map((item, index) => {
+                                                            let Total = Number(item.value.productPrice) * Number(item.count)
 
-                                                        return (
-                                                            <TableRow key={index}>
-                                                                <TableCell component="th" scope="row">
-                                                                    {item.value.productName}
-                                                                </TableCell>
-                                                                <TableCell>{item.value.productPrice}</TableCell>
-                                                                <TableCell><img alt={item.value.productName} style={styles.image} src={item.value.imageURL} />
-                                                                </TableCell>
-                                                                <TableCell>{item.count}</TableCell>
-                                                                <TableCell>{
-                                                                    Total
-                                                                }</TableCell>
-                                                                <TableCell>
-                                                                    <IconButton
-                                                                        onClick={(e) => this.handleDelete(e, index)}
+                                                            return (
+                                                                <TableRow key={index}>
+                                                                    <TableCell component="th" scope="row">
+                                                                        {item.value.productName}
+                                                                    </TableCell>
+                                                                    <TableCell>{item.value.productPrice}</TableCell>
+                                                                    <TableCell><img alt={item.value.productName} style={styles.image} src={item.value.imageURL} />
+                                                                    </TableCell>
+                                                                    <TableCell>{item.count}</TableCell>
+                                                                    <TableCell>{
+                                                                        Total
+                                                                    }</TableCell>
+                                                                    <TableCell>
+                                                                        <IconButton
+                                                                            onClick={(e) => this.handleDelete(e, index)}
 
-                                                                        // onClick={(e) => this.handleDelete(e, item.value.key)} 
-                                                                        color="inherit" aria-label="Delete">
-                                                                        <CloseIcon />
-                                                                    </IconButton>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        );
-                                                    })
-                                                }
+                                                                            // onClick={(e) => this.handleDelete(e, item.value.key)} 
+                                                                            color="inherit" aria-label="Delete">
+                                                                            <CloseIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })
+                                                    }
+                                                </TableBody>
+                                                <TableFooter>
+                                                    <TableRow>
+                                                        <TableCell></TableCell>
+                                                        <TableCell>
 
-                                                {/* <TableRow>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell>
-                                                        {
-                                                            this.state.Total
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        
-                                                    </TableCell>
-                                                </TableRow> */}
-                                            </TableBody>
-                                            <TableFooter>
-                                                <TableRow>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell>
-                                                        {/* {
-                                                            this.state.Total
-                                                        } */}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Button
-                                                            onClick={(e) => this.handlShipping(e)}
-                                                            // onClick={(e) => this.handlsubmit(e)} 
-                                                            variant="outlined">SHIPPING DETAIL</Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableFooter>
-                                        </Table> :
+                                                        </TableCell>
+                                                        <TableCell ></TableCell>
+                                                        <TableCell></TableCell>
+                                                        <TableCell>
+
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Button
+                                                                onClick={(e) => this.handletoggle(e)}
+                                                                // onClick={(e) => this.handlsubmit(e)} 
+                                                                variant="outlined">SHIPPING DETAIL</Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableFooter>
+                                            </Table>
+                                            <Typography style={{ padding: 40, color: "Red" }} align='center' variant="subheading">
+                                                {this.state.msg}
+                                            </Typography>
+                                        </Fragment>
+                                        :
                                         <Typography style={{ padding: 40 }} align='center' variant="subheading">
                                             You Cart is Empty
                                         </Typography>
@@ -446,17 +420,24 @@ console.log(this.state, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
                         </Grid>
                     </Grid>
                     {
-                        this.state.shippngCom && this.state.cartItem && this.state.cartItem.length
+                        this.state.open
                             ?
-                            <Fragment>
-                                <Grid container>
-                                    <Grid style={styles.flex} item xs={4}>
-                                    </Grid>
-                                    <Grid style={styles.flex} item xs={4}>
-                                        <Paper style={styles.paper1}>
-                                            <Typography align="center" variant="headline">
-                                                Shipping Detail
-                                        </Typography>
+                            <Dialog
+                                open={open}
+                                onClose={this.handletoggle}
+                            >
+                                <DialogTitle >
+                                    <Typography align="center" variant="headline">
+                                        Shipping Detail
+                                         </Typography>
+                                </DialogTitle>
+
+                                <DialogContent style={styles.dialogWidth}>
+                                    <Grid container>
+
+                                        <Grid style={styles.flex} item xs={12}>
+                                            {/* <Paper style={styles.paper1}> */}
+
                                             <form>
                                                 <FormControl fullWidth>
                                                     <TextField
@@ -478,25 +459,38 @@ console.log(this.state, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
                                                         disabled={isInvalid} onClick={(e) => this.handlsubmit(e)} variant="outlined">Submit</Button>
                                                 </FormControl>
                                             </form>
-                                        </Paper>
+                                            {/* </Paper> */}
+                                        </Grid>
                                     </Grid>
+                                </DialogContent>
+                            </Dialog>
 
-                                </Grid>
-                            </Fragment>
                             : null
                     }
                 </MuiThemeProvider>
+                <Snackbar
+                    anchorOrigin={{ vertical, horizontal }}
+                    snackopen={snackopen}
+                    onClose={this.handleClose}
+                    autoHideDuration={2000}
+                >
+                    <SnackbarContent
+                        style={styles.snaperbg}
+                        message={<span>Your Cart has been submitted</span>}
+                    />
+                </Snackbar>
             </Fragment>
         )
     }
 }
 function mapStateToProps(state) {
-    const { user, } = state;
+    const { user, cartItem } = state;
     // console.log("state in addCategory", state)
     return {
         user,
+        cartItem
     };
 }
 
-export default connect(mapStateToProps,null) (Cart);
+export default connect(mapStateToProps, { fnUpdate })(Cart);
 

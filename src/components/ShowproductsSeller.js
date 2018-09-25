@@ -96,49 +96,49 @@ class showProduct extends React.Component {
     handleClickOpen = () => {
         this.setState({ open: true });
 
-        let selectedCategory = this.props.showProductProps
+        // let selectedCategory = this.props.showProductProps
 
 
-        // console.log("selectedCategory", selectedCategory);
+        // // console.log("selectedCategory", selectedCategory);
 
-        let catKey = selectedCategory.key;
+        // let catKey = selectedCategory.key;
 
-        // console.log("catKey", catKey)
-        firebase.auth().onAuthStateChanged((user) => {
-            // console.log("currentUser.uid", user.email, user.uid)
+        // // console.log("catKey", catKey)
+        // firebase.auth().onAuthStateChanged((user) => {
+        //     // console.log("currentUser.uid", user.email, user.uid)
 
 
-            if (user) {
-                firebase.database().ref('Product/' + catKey).on('value', snap => {
-                    let objProduct = snap.val();
-                    // console.log("obj", objProduct)
+        //     if (user) {
+        //         firebase.database().ref('Product/' + catKey).on('value', snap => {
+        //             let objProduct = snap.val();
+        //             // console.log("obj", objProduct)
 
-                    let productList = [];
-                    for (let key in objProduct) {
+        //             let productList = [];
+        //             for (let key in objProduct) {
                         
-                        if (user.uid === objProduct[key].userKey) {
+        //                 if (user.uid === objProduct[key].userKey) {
                                
-                                productList.push({ ...objProduct[key], key });
-                        }
+        //                         productList.push({ ...objProduct[key], key });
+        //                 }
                         
-                        // for (let key in getData) {
-                            // console.log("??", getData[key].userKey)
+        //                 // for (let key in getData) {
+        //                     // console.log("??", getData[key].userKey)
                             
-                        // }
+        //                 // }
 
 
 
-                        // productList.push({ ...objProduct[key], key });
-                    }
+        //                 // productList.push({ ...objProduct[key], key });
+        //             }
 
-                    // console.log("productList", productList)
+        //             // console.log("productList", productList)
 
-                    this.setState({
-                        productList
-                    })
-                })
-            }
-        })
+        //             this.setState({
+        //                 productList
+        //             })
+        //         })
+        //     }
+        // })
     };
     handleClose(e) {
         e.preventDefault()
@@ -275,7 +275,6 @@ class showProduct extends React.Component {
                                             </CardContent>
                                         </Collapse> */}
                                         </Card>
-                                        {/* ////////XXXXXXXXXX////////// */}
 
                                     </Fragment>
                                 )

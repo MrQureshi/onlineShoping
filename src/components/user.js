@@ -10,10 +10,10 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-// import Badge from '@material-ui/core/Badge';
+import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-// import NotificationsIcon from '@material-ui/icons/Notifications';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 // import { mainListItems, secondaryListItems } from './listItems'
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -164,66 +164,14 @@ class Dashboard extends React.Component {
             }
         )
     }
-    // componentDidMount() {
-    //     let array = JSON.parse(localStorage.getItem('items'))
-    //     let original = [];
+    componentDidMount(){
+        localStorage.clear("items")
+    }
 
-    //     array ? array.map((list, index) => {
-
-    //         let tmpStr = JSON.stringify(list)
-    //         var newStr = tmpStr.substring(1, tmpStr.length - 1);
-
-    //         return (original.push(newStr))
-
-    //     }) : null
-    //     var compressed = [];
-
-    //     var copy = original.slice(0);
-
-    //     for (var i = 0; i < original.length; i++) {
-    //         var myCount = 0;
-
-    //         for (var w = 0; w < copy.length; w++) {
-    //             if (original[i] === copy[w]) {
-    //                 // increase amount of times duplicate is found
-    //                 myCount++;
-    //                 // sets item to undefined
-    //                 delete copy[w];
-    //             }
-    //         }
-    //         if (myCount > 0) {
-    //             var a = {}
-
-    //             var b = {};
-
-    //             b.obj = original[i];
-    //             let inString = b
-    //             let getObj
-
-    //             for (let key in inString) {
-    //                 // console.log("for", b[key])
-    //                 let mystring = inString[key]
-    //                 mystring = ('{' + mystring + '}')
-    //                 // console.log("mysttt", mystring)
-    //                 let prs = JSON.parse(mystring);
-    //                 // console.log("perse", prs)
-
-    //                 getObj = prs
-    //             }
-    //             a.value = getObj;
-    //             a.count = myCount;
-    //             compressed.push(a);
-    //         }
-    //     }
-    //     this.setState({
-    //         numberOfItems: compressed.length
-    //     })
-    // }
     render() {
         const { classes } = this.props;
         const { anchorEl } = this.state;
         const { Email, Username, profilePic, key } = this.props.user
-        
         // console.log("render mnmn", numberOfItems)
         const open = Boolean(anchorEl);
         return (
@@ -248,13 +196,13 @@ class Dashboard extends React.Component {
                             </IconButton>
 
                             <Typography variant="title" color="inherit" noWrap className={classes.title}>
-                                {Username  }
+                                {Username}
                             </Typography>
-                            {/* <IconButton onClick={() => this.handleCarts()} color="inherit">
-                                <Badge badgeContent={this.state.numberOfItems ? this.state.numberOfItems : 0} color="secondary">
-                                    <NotificationsIcon /> */}
-                            {/* </Badge> */}
-                            {/* </IconButton> */}
+                            <IconButton onClick={() => this.handleCarts()} color="inherit">
+                                <Badge badgeContent={this.props.cartItem.length ? this.props.cartItem.length : 0} color="secondary">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
                             {/* <IconButton
                 className={classes.bigAvatar} color="inherit" aria-haspopup="true" onClick={this.handleMenu} >
                 <Avatar className={classes.bigAvatar} /> */}
@@ -301,24 +249,24 @@ class Dashboard extends React.Component {
                         </div>
                         <Divider />
                         <List>
-                            
-                                <ListItem button onClick={() => this.handleDashboard()}>
-                                    <ListItemIcon>
-                                        <DashboardIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Dashboard" />
-                                </ListItem>
-                           
-                           
 
-                                <ListItem button onClick={() => this.handleCarts()}>
-                                    <ListItemIcon>
-                                        <ShoppingCartIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Carts" />
-                                </ListItem>
+                            <ListItem button onClick={() => this.handleDashboard()}>
+                                <ListItemIcon>
+                                    <DashboardIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Dashboard" />
+                            </ListItem>
 
-                           
+
+
+                            <ListItem button onClick={() => this.handleCarts()}>
+                                <ListItemIcon>
+                                    <ShoppingCartIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Carts" />
+                            </ListItem>
+
+
                             <ListItem button onClick={() => this.handlePurchased()}>
                                 <ListItemIcon>
                                     <PeopleIcon />
@@ -372,10 +320,11 @@ Dashboard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 function mapStateToProps(state) {
-    const { user } = state;
+    const { user, cartItem } = state;
     // console.log("state in seller", state)
     return {
-        user
+        user,
+        cartItem
     };
 }
-export default connect(mapStateToProps, null) (withStyles(styles)(Dashboard));
+export default connect(mapStateToProps, null)(withStyles(styles)(Dashboard));
